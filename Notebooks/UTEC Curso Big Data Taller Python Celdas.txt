@@ -1,0 +1,115 @@
+C1: 
+#Imagen con link y título
+<a href="https://www.bigdatauniversity.com"><img src = "https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/DA0101EN/Images/CCLog.png" width = 300, align = "center"></a>
+<h1 align=center><font size = 5>Data Analysis with Python</font></h1>
+
+C2: 
+#Bienvenida y tabla de contenidos
+<h3>Welcome!</h3>
+In this section, we will explore several methods to see if certain characteristics or features can be used to predict car price.
+<h2>Table of content</h2>
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+<ol>
+    <li><a href="#import_data">Import Data from Module</a></li>
+    <li><a href="#pattern_visualization">Analyzing Individual Feature Patterns using Visualization</a></li>
+    <li><a href="#discriptive_statistics">Descriptive Statistical Analysis</a></li>
+    <li><a href="#basic_grouping">Basics of Grouping</a></li>
+    <li><a href="#correlation_causation">Correlation and Causation</a></li>
+    <li><a href="#anova">ANOVA</a></li>
+</ol>
+</div>
+<hr>
+
+C3:
+#sección Data
+<h3>What are the main characteristics which have the most impact on the car price?</h3>
+<h2 id="import_data">1. Import Data</h2>
+
+C4: 
+#Importamos las librerías de data (herramientas de trabajo) 
+import pandas as pd
+import numpy as np
+
+C5: 
+#Importar la data
+path='https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/DA0101EN/automobileEDA.csv'
+df = pd.read_csv(path)
+df.head()
+
+C6: 
+#sección 2
+<h2 id="pattern">2. Analyzing Individual Feature Patterns using Visualization</h2>
+
+C7: 
+#Instalar administrador de paquetes e importar librería de gráfico
+%%capture
+! pip install seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+C8: 
+#Tipos de datos
+print(df.dtypes)
+
+C9: 
+#Calcular correlaciones entre todas las variables numéricas
+df.corr()
+
+C10: 
+#Calcular correlaciones entre variables seleccionadas
+df[["engine-size", "price"]].corr()
+
+C11: 
+#Dispersión Engine Peak RPM vs Price
+sns.regplot(x="peak-rpm", y="price", data=df)
+
+C12: 
+#Dispersión Engine Size vs Price
+sns.regplot(x="engine-size", y="price", data=df)
+plt.ylim(0,)
+
+C13: 
+#Cajas Body Style vs Price
+sns.boxplot(x="body-style", y="price", data=df)
+
+C14:
+#Cajas Engine Location vs Price
+sns.boxplot(x="engine-location", y="price", data=df)
+
+C15:
+#Importar Regresión Lineal
+from sklearn.linear_model import LinearRegression
+lm = LinearRegression()
+lm
+
+C16: 
+#Importar Regresión Lineal
+Z = df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']]
+lm.fit(Z, df['price'])
+lm.intercept_
+lm.coef_
+
+C17: 
+#Armar la fórmula
+$$
+Yhat = a + b_1 X_1 + b_2 X_2 + b_3 X_3 + b_4 X_4
+$$
+
+C18
+#Evaluación
+Y_hat = lm.predict(Z)
+
+plt.figure(figsize=(width, height))
+
+
+ax1 = sns.distplot(df['price'], hist=False, color="r", label="Actual Value")
+sns.distplot(Yhat, hist=False, color="b", label="Fitted Values" , ax=ax1)
+
+
+plt.title('Actual vs Fitted Values for Price')
+plt.xlabel('Price (in dollars)')
+plt.ylabel('Proportion of Cars')
+
+plt.show()
+plt.close()
